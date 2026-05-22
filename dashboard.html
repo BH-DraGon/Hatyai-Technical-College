@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inno Tech Wellness Centre - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Prompt', sans-serif; background-color: #f4f7fa; }
+        .tech-pattern { background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 0); background-size: 24px 24px; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white px-6 py-3.5 flex items-center justify-between shadow-sm sticky top-0 z-50 border-b border-slate-100">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 flex items-center justify-center bg-teal-50 rounded-xl text-teal-600 font-bold text-xl border border-teal-100">
+                <i class="fa-solid fa-heart-pulse"></i>
+            </div>
+            <div>
+                <h1 class="text-xs font-black text-teal-600 uppercase leading-none">Inno Tech</h1>
+                <p class="text-xs font-bold text-slate-700 mt-0.5">Wellness Centre</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <button class="relative text-slate-400 hover:text-teal-600 p-2"><i class="fa-regular fa-bell text-xl"></i><span class="absolute top-2 right-2 w-2 h-2 bg-amber-500 rounded-full"></span></button>
+            <div class="flex items-center space-x-3 border-l border-slate-100 pl-4">
+                <div class="text-right"><p id="nav-username" class="text-sm font-bold text-slate-700">กำลังโหลด...</p></div>
+                <div id="nav-avatar" class="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold text-sm">--</div>
+                <a href="#" id="logout-btn" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-right-from-bracket"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <aside class="w-full md:w-64 bg-white border-r border-slate-100 p-4 space-y-2">
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 bg-teal-600 text-white rounded-xl font-medium"><i class="fa-solid fa-chart-pie"></i><span>หน้าหลัก</span></a>
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-xl"><i class="fa-solid fa-stethoscope"></i><span>บันทึกผลการตรวจ</span></a>
+        </aside>
+
+        <main class="flex-1 p-6 md:p-8 space-y-6 max-w-7xl mx-auto w-full">
+            <div class="bg-gradient-to-r from-teal-800 to-emerald-950 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden tech-pattern">
+                <h2 id="welcome-title" class="text-3xl font-bold mb-2">ยินดีต้อนรับกลับมา 👋</h2>
+                <p class="text-teal-100/80">ระบบวิเคราะห์ข้อมูลสุขภาพชีวอนามัยส่วนบุคคลของท่าน</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <p class="text-[11px] text-slate-400 font-bold uppercase">BMI</p>
+                    <h3 id="bmi-val" class="text-3xl font-bold text-slate-800">--</h3>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <p class="text-[11px] text-slate-400 font-bold uppercase">อัตราชีพจร</p>
+                    <h3 id="hr-val" class="text-3xl font-bold text-slate-800">-- <span class="text-sm">bpm</span></h3>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <p class="text-[11px] text-slate-400 font-bold uppercase">ความดัน</p>
+                    <h3 id="bp-val" class="text-3xl font-bold text-slate-800">--</h3>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 text-slate-400 text-xs uppercase">
+                        <tr><th class="py-4 px-6">วันที่</th><th class="py-4 px-6">น้ำหนัก</th><th class="py-4 px-6">ส่วนสูง</th><th class="py-4 px-6">BMI</th><th class="py-4 px-6">ชีพจร</th></tr>
+                    </thead>
+                    <tbody id="history-body" class="divide-y divide-slate-50 font-semibold text-slate-600"></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <button onclick="openModal()" class="fixed bottom-8 right-8 bg-teal-600 text-white p-4 rounded-2xl shadow-2xl hover:bg-teal-700 transition"><i class="fa-solid fa-plus text-2xl"></i></button>
+
+    <div id="healthModal" class="hidden fixed inset-0 bg-slate-900/50 z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-sm p-6 space-y-4">
+            <h3 class="text-xl font-bold">บันทึกข้อมูลสุขภาพ</h3>
+            <form id="health-form" class="space-y-3">
+                <input type="number" id="w" placeholder="น้ำหนัก (kg)" class="w-full p-3 bg-slate-50 rounded-xl" required>
+                <input type="number" id="h" placeholder="ส่วนสูง (cm)" class="w-full p-3 bg-slate-50 rounded-xl" required>
+                <input type="number" id="hr" placeholder="ชีพจร (bpm)" class="w-full p-3 bg-slate-50 rounded-xl" required>
+                <button type="submit" class="w-full py-3 bg-teal-600 text-white rounded-xl font-bold">บันทึกข้อมูล</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const openModal = () => document.getElementById('healthModal').classList.remove('hidden');
+        const closeModal = () => document.getElementById('healthModal').classList.add('hidden');
+
+        document.getElementById('health-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const w = document.getElementById('w').value;
+            const h = document.getElementById('h').value;
+            const hr = document.getElementById('hr').value;
+            const bmi = (w / Math.pow((h/100), 2)).toFixed(1);
+            
+            const history = JSON.parse(localStorage.getItem('health_history')) || [];
+            history.unshift({ date: new Date().toLocaleDateString('th-TH'), w, h, bmi, hr });
+            localStorage.setItem('health_history', JSON.stringify(history));
+            location.reload();
+        });
+
+        window.onload = () => {
+            const user = JSON.parse(localStorage.getItem('current_session_user'));
+            document.getElementById('nav-username').textContent = user?.name || "ผู้ใช้งาน";
+            document.getElementById('nav-avatar').textContent = (user?.name || "??").substring(0, 2);
+            document.getElementById('welcome-title').textContent = `ยินดีต้อนรับกลับมา, คุณ${user?.name || ''} 👋`;
+
+            const history = JSON.parse(localStorage.getItem('health_history')) || [];
+            if(history.length > 0) {
+                document.getElementById('bmi-val').textContent = history[0].bmi;
+                document.getElementById('hr-val').innerHTML = `${history[0].hr} <span class='text-sm'>bpm</span>`;
+                document.getElementById('bp-val').textContent = "120/80";
+                
+                const body = document.getElementById('history-body');
+                history.forEach(item => {
+                    body.innerHTML += `<tr><td class="py-4 px-6">${item.date}</td><td class="py-4 px-6">${item.w}</td><td class="py-4 px-6">${item.h}</td><td class="py-4 px-6">${item.bmi}</td><td class="py-4 px-6">${item.hr}</td></tr>`;
+                });
+            }
+        };
+
+        document.getElementById('logout-btn').onclick = () => { localStorage.removeItem('current_session_user'); window.location.href = './login.html'; };
+    </script>
+</body>
+</html>
